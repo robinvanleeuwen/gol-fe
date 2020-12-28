@@ -39,8 +39,6 @@ pub struct Universe {
     width: u32,
     height: u32,
     cells: Vec<Cell>,
-    digests_identical: u32,
-    previous_digest: String,
     digest_history: Vec<String>,
     digest_history_count: HashMap<String, i32>,
     digest_history_retention: usize,
@@ -119,7 +117,6 @@ impl Universe {
         let count: u32 = 0;
         let width: u32 = width;
         let height: u32 = height;
-        let digests_identical: u32 = 0;
 
         let cells = (0..width * height)
             .map(|i| {
@@ -136,8 +133,6 @@ impl Universe {
             width,
             height,
             cells,
-            digests_identical,
-            previous_digest: String::from(""),
             digest_history_retention: digest_history_retention,
             digest_history: vec!(),
             digest_history_count: HashMap::with_capacity(30),
@@ -154,7 +149,12 @@ impl Universe {
     }
 
     fn recurring_pattern_present(&mut self, digest: &str) -> bool {
-
+        /*
+            When either one digest shows up more than 40 times, or
+            more than one digest shows up 20 times each, we can say
+            that there is a pattern in the cell-map. Return true if
+            a pattern is detected, otherwise return false.
+         */
         self.digest_history.push(String::from(digest.clone()));
         if self.digest_history.len() > self.digest_history_retention {
             let keys_to_hold = self.digest_history.split_off(1);
